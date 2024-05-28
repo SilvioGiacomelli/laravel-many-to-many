@@ -1,0 +1,54 @@
+@import '~bootstrap/scss/bootstrap';
+@import 'header';
+
+.main-wrapper {
+   height: calc(100vh - 56px);
+   overflow-y: auto;
+   background-color: aqua;
+   display: flex;
+   .dropdown {
+    display: none;
+    .new-project{
+        padding: 10px;
+        cursor: pointer;
+    }
+}
+
+li:hover .dropdown {
+    display: block;
+}
+}
+aside {
+   background-color: #f8f9fa;
+   border-right: 1px solid #dee2e6;
+   width: 8%;
+   ul{
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        a{
+            text-decoration: none;
+            color: #000;
+        }
+        li{
+             padding: 10px;
+             cursor: pointer;
+             &:hover{
+                background-color: #e9ecef;
+                border-radius: 5px
+             }
+        }
+        i{
+            margin-right: 10px;
+        }
+   }
+}
+#new-project{
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 2%;
+    &:hover{
+        background-color: #bcc4cc;
+        border-radius: 5px;
+    }
+}
