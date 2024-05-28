@@ -53,7 +53,7 @@
                             <img src="{{ asset('storage/' . $project->image) }}" alt="{{ $project->image }}"
                                 width="100">
                         @else
-                            No image
+                            <img src="/images/noimg.jpg" alt="" class="noimg">
                         @endif
                     </td>
                     <td>
