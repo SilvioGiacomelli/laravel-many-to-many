@@ -58,6 +58,7 @@ class ProjectsController extends Controller
                 'image' => 'sometimes|image',
                 'technologies' => 'array',
                 'technologies.*' => 'exists:technologies,id',
+                //scrivo exists:technologies,id perchè sto validando un array di tecnologie
             ],
             [
                 'title.required' => 'Title is required',
@@ -67,6 +68,7 @@ class ProjectsController extends Controller
                 'type.exists' => 'Selected type is invalid',
                 'technologies.array' => 'Technologies must be an array',
                 'technologies.*.exists' => 'Selected technology is invalid',
+                //scrivo technologies.* perchè sto validando un array di tecnologie
             ]
         );
 
