@@ -8,6 +8,7 @@ use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Functions\Helper as Help;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Type;
 
 class ProjectsController extends Controller
 {
@@ -39,7 +40,8 @@ class ProjectsController extends Controller
      */
     public function create()
     {
-        return view('admin.projects.create');
+        $types = Type::all();
+        return view('admin.projects.create', compact('types'));
     }
 
     /**
@@ -47,10 +49,11 @@ class ProjectsController extends Controller
      */
     public function store(Request $request)
     {
-        $exists = $request->validate(
+        // Validazione dei dati in ingresso
+        $validatedData = $request->validate(
             [
                 'title' => 'required|string',
-                'image' => 'sometimes|image', //sometimes vuol dire che se c'è l'immagine la valida, altrimenti no
+                'image' => 'sometimes|image',
             ],
             [
                 'title.required' => 'Title is required',
@@ -58,24 +61,33 @@ class ProjectsController extends Controller
                 'image.image' => 'Uploaded file must be an image',
             ]
         );
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads');
-            //usiamo file e non put perche' put sovrascrive il file, mentre file lo aggiunge e crea un nuovo nome
-            $data['image'] = $path;
-        }
 
+        // Verifica se un progetto con lo stesso titolo esiste già
         $exists = Project::where('title', $request->title)->first();
         if ($exists) {
             return redirect()->route('admin.projects.index')->with('error', 'Project already exists');
-        } else {
-            $project = new Project();
-            $project->title = $request->title;
-            $project->slug = Help::generateSlug($project->title, Project::class);
-            $project->image = $data['image'] ?? null; //il ?? vuole dire che se non c'è l'immagine, metti null
-            $project->save();
-            return redirect()->route('admin.projects.index')->with('success', 'Project created');
         }
+
+        // Inizializzazione dell'array dei dati
+        $data = [];
+
+        // Gestione dell'upload dell'immagine se presente
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('uploads');
+            $data['image'] = $path;
+        }
+
+        // Creazione del nuovo progetto
+        $project = new Project();
+        $project->title = $request->title;
+        $project->type_id = $request->type;
+        $project->slug = Help::generateSlug($project->title, Project::class);
+        $project->image = $data['image'] ?? null;
+        $project->save();
+
+        return redirect()->route('admin.projects.index')->with('success', 'Project created');
     }
+
 
     /**
      * Display the specified resource.

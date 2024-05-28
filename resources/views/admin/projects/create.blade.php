@@ -29,7 +29,7 @@
             <input type="file" class="form-control" id="image" name="image"
                 placeholder='insert a link for your image'>
         </div>
-        {{-- <div class="mb-3">
+        <div class="mb-3">
             <label for="type" class="form-label">Type</label>
             <select class="form-select" id="type" name="type">
                 @foreach ($types as $type)
@@ -38,7 +38,7 @@
                     </option>
                 @endforeach
             </select>
-        </div> --}}
+        </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 @endsection
