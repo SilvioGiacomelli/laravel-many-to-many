@@ -59,6 +59,9 @@
                     <td>
                         {{-- <button class="btn btn-warning" onclick="submitForm({{ $project->id }})" type="submit">Edit
                         </button> --}}
+                        <a href="{{ route('admin.projects.show', $project->id) }}">
+                            <div class="btn btn-primary"><i class="fa-solid fa-eye"></i></div>
+                        </a>
                         <a href="{{ route('admin.projects.edit', $project->id) }}">
                             <div class="btn btn-warning"><i class="fa-solid fa-pen-nib"></i></div>
                         </a>

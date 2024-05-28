@@ -80,9 +80,14 @@ class ProjectsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Project $project)
     {
-        //
+        $project = Project::find($project->id);
+        if ($project) {
+            return view('admin.projects.show', compact('project'));
+        } else {
+            return redirect()->route('admin.projects.index')->with('error', 'Project not found');
+        }
     }
 
     /**
