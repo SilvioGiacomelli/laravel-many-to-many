@@ -56,11 +56,17 @@ class ProjectsController extends Controller
             [
                 'title' => 'required|string',
                 'image' => 'sometimes|image',
+                'technologies' => 'array',
+                'technologies.*' => 'exists:technologies,id',
             ],
             [
                 'title.required' => 'Title is required',
                 'title.string' => 'Title must be a string',
                 'image.image' => 'Uploaded file must be an image',
+                'type.required' => 'Type is required',
+                'type.exists' => 'Selected type is invalid',
+                'technologies.array' => 'Technologies must be an array',
+                'technologies.*.exists' => 'Selected technology is invalid',
             ]
         );
 
@@ -71,7 +77,7 @@ class ProjectsController extends Controller
         }
 
         // Inizializzazione dell'array dei dati
-        $data = [];
+        $data = $validatedData;
 
         // Gestione dell'upload dell'immagine se presente
         if ($request->hasFile('image')) {
@@ -86,6 +92,11 @@ class ProjectsController extends Controller
         $project->slug = Help::generateSlug($project->title, Project::class);
         $project->image = $data['image'] ?? null;
         $project->save();
+
+        // Associa le tecnologie selezionate al progetto
+        if ($request->has('technologies')) {
+            $project->technologies()->sync($request->technologies);
+        }
 
         return redirect()->route('admin.projects.index')->with('success', 'Project created');
     }
@@ -124,16 +135,22 @@ class ProjectsController extends Controller
             [
                 'title' => 'required|string',
                 'image' => 'sometimes|image',
+                'technologies' => 'array',
+                'technologies.*' => 'exists:technologies,id',
             ],
             [
                 'title.required' => 'Title is required',
                 'title.string' => 'Title must be a string',
                 'image.image' => 'Uploaded file must be an image',
+                'type.required' => 'Type is required',
+                'type.exists' => 'Selected type is invalid',
+                'technologies.array' => 'Technologies must be an array',
+                'technologies.*.exists' => 'Selected technology is invalid',
             ]
         );
 
         // Verifica se un altro progetto con lo stesso titolo esiste già
-        $exists = Project::where('title', $request->title)->where('id', '!=', $project->id)->first();
+        $exists = Project::where('title', $request->title)->where('id', '!=', $project->id)->first(); //!= vuole dire diverso da
         if ($exists) {
             return redirect()->route('admin.projects.index')->with('error', 'Project already exists');
         }
@@ -152,6 +169,15 @@ class ProjectsController extends Controller
 
         // Aggiornamento dei dati del progetto
         $project->update($data);
+
+
+        // Associa le tecnologie selezionate al progetto
+        if ($request->has('technologies')) {
+            $project->technologies()->sync($request->technologies);
+        } else {
+            $project->technologies()->sync([]); // Rimuove tutte le associazioni se nessuna tecnologia è selezionata
+        }
+
 
         return redirect()->route('admin.projects.index')->with('success', 'Project modified');
     }

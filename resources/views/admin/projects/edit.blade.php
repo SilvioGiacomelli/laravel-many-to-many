@@ -41,14 +41,16 @@
             </select>
         </div>
         <div class="mb-3">
-            <label for="type" class="form-label">Type</label>
-            <select class="form-select" id="type" name="type">
-                @foreach ($technologies as $technology)
-                    <option value="{{ $technology->id }}">
+            <label class="form-label">Technologies</label>
+            @foreach ($technologies as $technology)
+                <div class="form-check checkboxes">
+                    <input class="form-check-input" type="checkbox" value="{{ $technology->id }}"
+                        id="tech{{ $technology->id }}" name="technologies[]">
+                    <label class="form-check-label" for="tech{{ $technology->id }}">
                         {{ $technology->title }}
-                    </option>
-                @endforeach
-            </select>
+                    </label>
+                </div>
+            @endforeach
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
