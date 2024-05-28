@@ -9,6 +9,7 @@ use App\Models\ProjectCategory;
 use App\Functions\Helper as Help;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Type;
+use App\Models\Technology;
 
 class ProjectsController extends Controller
 {
@@ -41,7 +42,8 @@ class ProjectsController extends Controller
     public function create()
     {
         $types = Type::all();
-        return view('admin.projects.create', compact('types'));
+        $technologies = Technology::all();
+        return view('admin.projects.create', compact('types', 'technologies'));
     }
 
     /**
@@ -107,7 +109,9 @@ class ProjectsController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('admin.projects.edit', compact('project'));
+        $types = Type::all();
+        $technologies = Technology::all();
+        return view('admin.projects.edit', compact('project', 'types', 'technologies'));
     }
 
     /**
@@ -115,7 +119,8 @@ class ProjectsController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        $data = $request->validate(
+        // Validazione dei dati in ingresso
+        $validatedData = $request->validate(
             [
                 'title' => 'required|string',
                 'image' => 'sometimes|image',
@@ -126,22 +131,31 @@ class ProjectsController extends Controller
                 'image.image' => 'Uploaded file must be an image',
             ]
         );
+
+        // Verifica se un altro progetto con lo stesso titolo esiste già
+        $exists = Project::where('title', $request->title)->where('id', '!=', $project->id)->first();
+        if ($exists) {
+            return redirect()->route('admin.projects.index')->with('error', 'Project already exists');
+        }
+
+        // Inizializzazione dell'array dei dati
+        $data = $validatedData;
+
+        // Gestione dell'upload dell'immagine se presente
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads');
-            //usiamo file e non put perche' put sovrascrive il file, mentre file lo aggiunge e crea un nuovo nome
             $data['image'] = $path;
         }
 
-        $exists = Project::where('title', $request->title)->first();
-        if ($exists) {
-            return redirect()->route('admin.projects.index')->with('error', 'Project already exists');
-        } else {
-            $data['slug'] = Help::generateSlug($request->title, Project::class);
-            $project->image = $data['image'] ?? null;
-            $project->update($data);
-            return redirect()->route('admin.projects.index')->with('success', 'Project modified');
-        }
+        // Generazione dello slug
+        $data['slug'] = Help::generateSlug($request->title, Project::class);
+
+        // Aggiornamento dei dati del progetto
+        $project->update($data);
+
+        return redirect()->route('admin.projects.index')->with('success', 'Project modified');
     }
+
 
     /**
      * Remove the specified resource from storage.

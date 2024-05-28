@@ -39,6 +39,16 @@
                 @endforeach
             </select>
         </div>
+        <div class="mb-3">
+            <label for="type" class="form-label">Type</label>
+            <select class="form-select" id="type" name="type">
+                @foreach ($technologies as $technology)
+                    <option value="{{ $technology->id }}">
+                        {{ $technology->title }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 @endsection
