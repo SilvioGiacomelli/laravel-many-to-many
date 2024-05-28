@@ -109,13 +109,19 @@ class ProjectsController extends Controller
                 'image.image' => 'Uploaded file must be an image',
             ]
         );
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('uploads');
+            //usiamo file e non put perche' put sovrascrive il file, mentre file lo aggiunge e crea un nuovo nome
+            $data['image'] = $path;
+        }
+
         $exists = Project::where('title', $request->title)->first();
         if ($exists) {
             return redirect()->route('admin.projects.index')->with('error', 'Project already exists');
         } else {
             $data['slug'] = Help::generateSlug($request->title, Project::class);
-            $project->update($data);
             $project->image = $data['image'] ?? null;
+            $project->update($data);
             return redirect()->route('admin.projects.index')->with('success', 'Project modified');
         }
     }
