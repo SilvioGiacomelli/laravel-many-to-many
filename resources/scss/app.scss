@@ -21,6 +21,7 @@ li:hover .dropdown {
 aside {
    background-color: #f8f9fa;
    border-right: 1px solid #dee2e6;
+   height: calc(100vh - 56px);
    width: 8%;
    ul{
         list-style-type: none;
