@@ -29,6 +29,7 @@
                 <th scope="col"><a
                         href="{{ route('admin.projects.order', ['direction' => $direction, 'column' => 'title']) }}">Title</a>
                 </th>
+                <th scope="col">Technology</th>
                 <th scope="col">Type</th>
                 <th scope="col">Image</th>
                 <th scope="col">Actions</th>
@@ -44,6 +45,14 @@
                             @method('PUT')
                             <input type="text" value="{{ $project->title }}" name="title">
                         </form>
+                    </td>
+                    <td>
+                        @forelse ($project->technologies as $technology)
+                            <span class="badge text-bg-warning">{{ $technology->title }}</span>
+                        @empty
+                            - no tag -
+                        @endforelse
+                        {{ $project->technology }}
                     </td>
                     <td>
                         {{ $project->type?->title }}
