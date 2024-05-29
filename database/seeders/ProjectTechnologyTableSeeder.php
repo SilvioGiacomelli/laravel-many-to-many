@@ -21,7 +21,7 @@ class ProjectTechnologyTableSeeder extends Seeder
 
             $technology_id = Technology::inRandomOrder()->first()->id;
 
-            $project->technologies()->attach($technology_id);
+            $project->technologies()->attach($technology_id); //qui non metto sync ma attach, perchè voglio aggiungere tecnologie in modo casuale, sync invece cancella le tecnologie e ne aggiunge di nuove
         }
     }
 }
